@@ -1,0 +1,170 @@
+{
+  "name": "Calendar assistant",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 6
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        0,
+        0
+      ],
+      "id": "51d29d4b-6e4e-42ff-8aac-a7b2cb5d911a",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "Agent instructions: Look at my events/meetings for the day and send me an email to chanchalaggarwal1515@gmail.com on the top two most important events of the day and tell me why. Look at the event title, description, attendees to find this out.",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        224,
+        0
+      ],
+      "id": "4e98b5cc-64f0-449b-8c9d-04f8ccdd88a3",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": "openai/gpt-oss-120b",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        96,
+        208
+      ],
+      "id": "96f78cee-3487-45b1-811d-dda78b0cc987",
+      "name": "Groq Chat Model",
+      "credentials": {
+        "groqApi": {
+          "id": "qiP3rqm1cvkekEPX",
+          "name": "Groq account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Look at my events/meetings for the day and send me a nicely formatted HTML email to zulfkarali003@gmail.com on the top two most important events of the day and tell me why. Look at the event title, description, attendees to find this out.",
+        "sendTo": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('To', ``, 'string') }}",
+        "subject": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Subject', ``, 'string') }}",
+        "message": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message', ``, 'string') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.2,
+      "position": [
+        480,
+        304
+      ],
+      "id": "fdb14626-44c4-4b68-ac9d-13049debedb9",
+      "name": "Send a message in Gmail",
+      "webhookId": "982ddd19-243a-4fbc-8c24-f1d779809683",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "CA7zU0UN3VCXVBaf",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "calendar": {
+          "__rl": true,
+          "value": "chanchalaggarwal1515@gmail.com",
+          "mode": "list",
+          "cachedResultName": "chanchalaggarwal1515@gmail.com"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        384,
+        208
+      ],
+      "id": "3f3ddf69-c74e-493e-a3d2-275bc033ae48",
+      "name": "Get many events in Google Calendar",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "UOxY0VG2gMghypFn",
+          "name": "Google Calendar account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message in Gmail": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get many events in Google Calendar": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "135510c4-e119-4cb3-b966-5600349e9c12",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "9d1dc40f2b8caa0adf1f69f3ac8d0341cfcce0d57eae446f13694ad7a6cbc20c"
+  },
+  "nodeGroups": [],
+  "id": "xOe8z0JhAvrkIAdb",
+  "tags": []
+}
